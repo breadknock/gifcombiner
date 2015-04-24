@@ -14,14 +14,20 @@ class ImgurAPIClient:
 
     # Implement error checking
     def get_album(self, albumID, randID):
-        target_album = self.client.get_album(albumID)
-        links = [i['link'] for i in target_album.images]
-        totalsize = sum([i['size'] for i in target_album.images])
-        for idx, i in enumerate(links):
-            self.url_opener.retrieve(i, randID + '/' +
-                                     str(idx).zfill(4) + '.gif')
-        return True
+        try:
+            target_album = self.client.get_album(albumID)
+            links = [i['link'] for i in target_album.images]
+            totalsize = sum([i['size'] for i in target_album.images])
+            for idx, i in enumerate(links):
+                self.url_opener.retrieve(i, randID + '/' +
+                                         str(idx).zfill(4) + '.gif')
+        except Exception:
+            return "FAIL"
+        return None
 
     def upload_image(self, imagename):
-        x = self.client.upload_from_path(imagename)
-        return x['link']
+        try:
+            x = self.client.upload_from_path(imagename)
+            return x['link']
+        except Exception:
+            return None
