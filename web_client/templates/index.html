@@ -1,8 +1,34 @@
 <!DOCTYPE HTML>
 <html>
-    <head></head>
+    <head>
+    </head>
 
 <body>
-THIS IS THE HOMEPAGE
+<input name="album_id" type="text"><button name="submit_request">Submit!</button>
+<br />
+<span id="imgur_url"></span>
+
+<script type="text/javascript">
+
+var httpPostReqr = new XMLHttpRequest();
+httpPostReqr.onreadystatechange = insertURL;
+document.getElementsByName("submit_request")[0].onclick = makeRequest
+
+function makeRequest() {
+    httpPostReqr.open('POST', '/API');
+    httpPostReqr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    var request_body = "input_type=IMGUR&output_type=IMGUR&album_id=";
+    request_body = request_body + document.getElementsByName("album_id")[0].value
+    httpPostReqr.send(request_body)
+}
+
+function insertURL() {
+    if(httpPostReqr.readyState == 4) {
+        document.getElementById("imgur_url").innerHTML = httpPostReqr.responseText;
+    }
+}
+
+
+</script>
 </body>
 </html>
