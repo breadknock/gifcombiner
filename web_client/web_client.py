@@ -25,16 +25,16 @@ def id_generator():
                     for i in range(10)])
 
 
-@app.route("/")
+@app.route('/')
 def send_homepage():
     return render_template('index.html')
 
 
-@app.route("/API", methods=['POST'])
+@app.route('/API', methods=['POST'])
 def get_data():
     print request.form.getlist('input_type')
     if 'input_type' not in request.form or 'output_type' not in request.form:
-        return "Need to declare an input and output type", 500
+        return 'Need to declare an input and output type', 500
 
     rand_id = id_generator()
     os.mkdir(rand_id)
@@ -47,26 +47,29 @@ def get_data():
         err = imgur_client.get_album(request.form['album_id'], rand_id)
         if err is not None:
             clean_up(rand_id)
-            return ("Could not access the album with id" +
+            return ('Could not access the album with id' +
                     request.form['album_id'], 500)
     else:
-        print "Input not recognized"
+        print 'Input not recognized'
         clean_up(rand_id)
-        return "Input type not recognized", 500
+        return 'Input type not recognized', 500
 
     os.system('convert -delay 0 -loop 0 ' +
               rand_id + '/*.gif ' + rand_id + '.gif')
+    print 'Created composite gif: ' + rand_id + '.gif'
 
     if request.form['output_type'] == 'IMGUR':
         link = imgur_client.upload_image(filename)
         if link is None:
-            return "Could not post the gif", 500
+            return 'Could not post the gif', 500
+        else:
+            print 'GIF uploaded'
     else:
         clean_up(rand_id)
-        return "Input type not recognized", 500
+        return 'Input type not recognized', 500
 
     clean_up(rand_id)
     return link
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(host='0.0.0.0')
