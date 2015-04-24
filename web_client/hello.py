@@ -9,6 +9,7 @@ import shutil
 app = Flask(__name__)
 imgur_client = ImgurAPIClient()
 
+
 def clean_up(rand_id):
     try:
         shutil.rmtree(rand_id)
@@ -17,8 +18,11 @@ def clean_up(rand_id):
     except OSError:
         pass
 
+
 def id_generator():
-    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(10)])
+    return ''.join([random.choice(string.ascii_letters + string.digits)
+                    for i in range(10)])
+
 
 @app.route("/", methods=['POST'])
 def get_data():
@@ -34,13 +38,14 @@ def get_data():
     link = ''
 
     if request.form['input_type'] == 'IMGUR' and 'album_id' in request.form:
-        imgur_client.get_album(request.form['album_id'],rand_id)
+        imgur_client.get_album(request.form['album_id'], rand_id)
     else:
         print "Input not recognized"
         clean_up(rand_id)
         return "Input type not recognized"
 
-    os.system('convert -delay 0 -loop 0 ' + rand_id + '/*.gif ' + rand_id + '.gif')
+    os.system('convert -delay 0 -loop 0 ' +
+              rand_id + '/*.gif ' + rand_id + '.gif')
 
     if request.form['output_type'] == 'IMGUR':
         link = imgur_client.upload_image(filename)
