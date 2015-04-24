@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request
+from flask import render_template
 from imgur_getter import ImgurAPIClient
 import os
 import random
@@ -24,11 +25,16 @@ def id_generator():
                     for i in range(10)])
 
 
-@app.route("/", methods=['POST'])
+@app.route("/")
+def send_homepage():
+    return render_template('index.html')
+
+
+@app.route("/API", methods=['POST'])
 def get_data():
     print request.form.getlist('input_type')
     if 'input_type' not in request.form or 'output_type' not in request.form:
-        return "Need to declare an input and output type"
+        return "Need to declare an input and output type", 500
 
     rand_id = id_generator()
     os.mkdir(rand_id)
@@ -42,7 +48,7 @@ def get_data():
     else:
         print "Input not recognized"
         clean_up(rand_id)
-        return "Input type not recognized"
+        return "Input type not recognized", 500
 
     os.system('convert -delay 0 -loop 0 ' +
               rand_id + '/*.gif ' + rand_id + '.gif')
@@ -51,7 +57,7 @@ def get_data():
         link = imgur_client.upload_image(filename)
     else:
         clean_up(rand_id)
-        return "Input type not recognized"
+        return "Input type not recognized", 500
 
     clean_up(rand_id)
     return link
