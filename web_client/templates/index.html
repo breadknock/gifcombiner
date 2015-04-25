@@ -7,6 +7,8 @@
 </head>
 
 <body>
+Input imgur album ID or URL:
+<br />
 <input name="album_id" type="text"><button name="submit_request">Submit!</button>
 <br />
 <span id="imgur_url"></span>
@@ -21,7 +23,9 @@ function makeRequest() {
     httpPostReqr.open('POST', '/API');
     httpPostReqr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var request_body = "input_type=IMGUR&output_type=IMGUR&album_id=";
-    request_body = request_body + document.getElementsByName("album_id")[0].value
+    var album_id = document.getElementsByName("album_id")[0].value
+    album_id = album_id.split('/').pop()
+    request_body = request_body + album_id
     httpPostReqr.send(request_body)
 }
 
