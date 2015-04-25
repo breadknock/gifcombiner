@@ -38,7 +38,7 @@ def create_image():
     if 'input_type' not in request.form or 'output_type' not in request.form:
         return 'Need to declare an input and output type', 500
 
-    rand_id = id_generator()
+    rand_id = create_random_id()
     os.mkdir(rand_id)
 
     filename = './' + rand_id + '.gif'
