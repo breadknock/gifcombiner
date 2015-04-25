@@ -4,6 +4,7 @@ import string
 
 
 class ImgurAPIClient:
+    MAX_IMAGE_SIZE = 20000000 # 20MB
     def __init__(self):
         secret_data = open('../secret.txt', 'r')
         client_id = secret_data.readline().strip()
@@ -18,6 +19,8 @@ class ImgurAPIClient:
             target_album = self.client.get_album(albumID)
             links = [i['link'] for i in target_album.images]
             totalsize = sum([i['size'] for i in target_album.images])
+            if totalsize > self.MAX_IMAGE_SIZE:
+                return 'The given album is too big.'
             for idx, i in enumerate(links):
                 self.url_opener.retrieve(i, randID + '/' +
                                          str(idx).zfill(4) + '.gif')
