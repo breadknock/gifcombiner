@@ -47,7 +47,8 @@ def get_data():
         err = imgur_client.get_album(request.form['album_id'], rand_id)
         if err is not None:
             clean_up(rand_id)
-            return ('Could not access the album with id' +
+            return err, 500
+            return ('Could not access the album with id ' +
                     request.form['album_id'], 500)
     else:
         print 'Input not recognized'
@@ -60,6 +61,7 @@ def get_data():
 
     if request.form['output_type'] == 'IMGUR':
         link = imgur_client.upload_image(filename)
+        clean_up(rand_id)
         if link is None:
             return 'Could not post the gif', 500
         else:
@@ -68,8 +70,7 @@ def get_data():
         clean_up(rand_id)
         return 'Input type not recognized', 500
 
-    clean_up(rand_id)
     return link
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',threaded=True)
+    app.run(host='0.0.0.0', threaded=True)

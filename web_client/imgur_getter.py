@@ -21,8 +21,14 @@ class ImgurAPIClient:
             for idx, i in enumerate(links):
                 self.url_opener.retrieve(i, randID + '/' +
                                          str(idx).zfill(4) + '.gif')
-        except Exception:
-            return "FAIL"
+        except Exception as e:
+            print e
+            if '(404)' in str(e):
+                return str(e)[5:]
+            elif 'Connection aborted' in str(e):
+                return 'Lost server connection'
+            else:
+                return 'Could not complete request'
         return None
 
     def upload_image(self, imagename):
