@@ -9,8 +9,8 @@
 
 <style>
 body {
-     /* Background image courtesy of subtlepatterns.com */
-    background-image: url("{{ url_for('static', filename='upfeathers.png') }}");
+     /* Background pattern courtesy of subtlepatterns.com */
+    background-image: url("{{ url_for('static', filename='confectionary.png') }}");
 }
 </style>
 
@@ -18,9 +18,13 @@ body {
 </head>
 
 <body>
+<div id="title">
+<h1>Gif-Combiner</h1>
+Combines multiple gifs into one single gif for your viewing pleasure.
+</div>
 
 <div id="mainform">
-Input Imgur album ID or URL:
+<strong>Input Imgur album ID or URL:</strong>
 <br />
 <input name="album_id" class="inputclass" type="text">
 <button class="inputclass" name="submit_request">Submit!</button>
@@ -31,21 +35,34 @@ Input Imgur album ID or URL:
 
 var httpPostReqr = new XMLHttpRequest();
 httpPostReqr.onreadystatechange = insertURL;
-document.getElementsByName("submit_request")[0].onclick = makeRequest
+document.getElementsByName("submit_request")[0].onclick = makeRequest;
 
 function makeRequest() {
     httpPostReqr.open('POST', '/API');
     httpPostReqr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var request_body = "input_type=IMGUR&output_type=IMGUR&album_id=";
-    var album_id = document.getElementsByName("album_id")[0].value
-    album_id = album_id.split('/').pop()
-    request_body = request_body + album_id
-    httpPostReqr.send(request_body)
+    var album_id = document.getElementsByName("album_id")[0].value;
+    album_id = album_id.split('/').pop();
+    request_body = request_body + album_id;
+    httpPostReqr.send(request_body);
 }
 
 function insertURL() {
     if(httpPostReqr.readyState == 4) {
-        document.getElementById("imgur_url").innerHTML = httpPostReqr.responseText;
+        var build_str;
+        var result_str = httpPostReqr.responseText;
+        console.log(result_str);
+        if(result_str.indexOf('.gif')>0) {
+            build_str = "Combined gif: <br />";
+            build_str += "<a target='_blank' href='";
+            build_str += result_str;
+            build_str += "'>";
+            build_str += result_str;
+            build_str += "</a>";
+        } else {
+            build_str = result_str;
+        }
+        document.getElementById("imgur_url").innerHTML = build_str;
     }
 }
 
