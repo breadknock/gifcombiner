@@ -11,6 +11,7 @@ app = Flask(__name__)
 imgur_client = ImgurAPIClient()
 
 
+# Remove old image file and image folder
 def clean_up(rand_id):
     try:
         shutil.rmtree(rand_id)
@@ -20,7 +21,8 @@ def clean_up(rand_id):
         pass
 
 
-def id_generator():
+# Create a random ID to store the images as to prevent conflicts with threading
+def create_random_id():
     return ''.join([random.choice(string.ascii_letters + string.digits)
                     for i in range(10)])
 
@@ -31,7 +33,7 @@ def send_homepage():
 
 
 @app.route('/API', methods=['POST'])
-def get_data():
+def create_image():
     print request.form.getlist('input_type')
     if 'input_type' not in request.form or 'output_type' not in request.form:
         return 'Need to declare an input and output type', 500
@@ -43,13 +45,12 @@ def get_data():
 
     link = ''
 
+    # Download files to the server from the selected API
     if request.form['input_type'] == 'IMGUR' and 'album_id' in request.form:
         err = imgur_client.get_album(request.form['album_id'], rand_id)
         if err is not None:
             clean_up(rand_id)
             return err, 500
-            return ('Could not access the album with id ' +
-                    request.form['album_id'], 500)
     else:
         print 'Input not recognized'
         clean_up(rand_id)
@@ -59,6 +60,7 @@ def get_data():
               rand_id + '/*.gif ' + rand_id + '.gif')
     print 'Created composite gif: ' + rand_id + '.gif'
 
+    # Host files to the selected API output
     if request.form['output_type'] == 'IMGUR':
         link = imgur_client.upload_image(filename)
         clean_up(rand_id)
