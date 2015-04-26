@@ -6,3 +6,6 @@ Combines imgur gifs and re-uploads them
 - This app uses a Flask server, with AJAX calls to the Python backend
 
 - Background image on website from [Subtle Patterns](http://subtlepatterns.com)
+
+Example album to test:
+http://imgur.com/a/vMGoV
